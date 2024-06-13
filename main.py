@@ -5,7 +5,7 @@ import random
 # Constants
 # Sizes
 SIZE_BLOCK = 50
-SIZE_FIELD_IN_BLOCKS = (10, 10)
+SIZE_FIELD_IN_BLOCKS = (8, 8)
 SIZE_SPACE = 10
 SIZE_WINDOW = (
     (SIZE_BLOCK + SIZE_SPACE) * SIZE_FIELD_IN_BLOCKS[0] - SIZE_SPACE,
@@ -21,13 +21,14 @@ COLOR_FONT = (0, 182, 63)
 # Other
 W = pygame.display.set_mode((SIZE_WINDOW[0], SIZE_WINDOW[1]))
 C = pygame.time.Clock()
-F = pygame.font.SysFont('Stick', 60) 
-F_SHADOW = pygame.font.SysFont('Stick', 65) 
+# F = pygame.font.SysFont('Stick', 60) 
+# F_SHADOW = pygame.font.SysFont('Stick', 65) 
 FPS = 60
 TIME_DELAY_MOVE = 300
 
 t = pygame.time.get_ticks()
 snake_vector = (1, 0)
+temporary_vector = snake_vector
 
 
 # Classes
@@ -52,6 +53,14 @@ class Head(Block):
         self.vector = snake_vector
         self.space_vector = (0, 0)
         all_cells[from_pos_to_num(self.rect.x, self.rect.y)].disactivate()
+    def check_out(self):
+        if self.rect.x > SIZE_WINDOW[0] or self.rect.x < 0 or self.rect.y > SIZE_WINDOW[1] or self.rect.y < 0:
+            game_over()
+    def check_collide(self):
+        try:
+            all_cells[from_pos_to_num(self.rect.y, self.rect.x)].disactivate()
+        except ValueError:
+            game_over()
 class Snake():
     def __init__(self, *blocks) -> None:
         self.blocks = list(blocks)
@@ -59,7 +68,9 @@ class Snake():
         all_cells[from_pos_to_num(self.blocks[-1].rect.y, self.blocks[-1].rect.x)].activate()
         for i in self.blocks:
             i.move()
-        all_cells[from_pos_to_num(self.blocks[0].rect.y, self.blocks[0].rect.x)].disactivate()
+        self.blocks[0].check_out()
+        self.blocks[0].check_collide()
+        
     def replace_vector(self) -> None:
         for i in range(len(self.blocks) - 1, 0, -1):
             self.blocks[i].vector = self.blocks[i - 1].vector
@@ -81,6 +92,8 @@ class Apple():
     def check_collide(self):
         if self.rect.colliderect(snake.blocks[0]):
             snake.add_block()
+            if len(null_cells) == 0:
+                win()
             self.replace_pos()
     def replace_pos(self):
         pos = random.choice(null_cells)
@@ -101,29 +114,44 @@ class Null_cell():
         global null_cells
         null_cells.remove(self.coordinates)
 
+
 # Functions
 def events() -> None:
-    global snake_vector
+    global temporary_vector
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             exit()
         if e.type == pygame.KEYDOWN:
             if e.key == pygame.K_UP:
                 if snake_vector != (0, 1):
-                    snake_vector = (0, -1)
+                    temporary_vector = (0, -1)
             if e.key == pygame.K_DOWN:
                 if snake_vector != (0, -1):
-                    snake_vector = (0, 1)
+                    temporary_vector = (0, 1)
             if e.key == pygame.K_RIGHT:
                 if snake_vector != (-1, 0):
-                    snake_vector = (1, 0)
+                    temporary_vector = (1, 0)
             if e.key == pygame.K_LEFT:
                 if snake_vector != (1, 0):
-                    snake_vector = (-1, 0)
+                    temporary_vector = (-1, 0)
 def from_pos_to_num(x, y) -> int:
     x /= SIZE_BLOCK + SIZE_SPACE
     y /= SIZE_BLOCK + SIZE_SPACE
     return int(y * SIZE_FIELD_IN_BLOCKS[0] + x)
+def win():
+    snake.draw()
+    pygame.display.flip()
+    delay_exit()
+def game_over():
+    snake.draw()
+    apple.draw()
+    pygame.display.flip()
+    delay_exit()
+def delay_exit():
+    while True:
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                exit()
 
 
 all_cells = []
@@ -140,6 +168,7 @@ while True:
     events()
 
     if t + TIME_DELAY_MOVE <= pygame.time.get_ticks():
+        snake_vector = temporary_vector
         W.fill(COLOR_BACKGROUND)
         last_coordinate = (snake.blocks[-1].rect.x, snake.blocks[-1].rect.y)
         snake.replace_vector()
