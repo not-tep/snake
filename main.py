@@ -8,7 +8,7 @@ pygame.font.init()
 # Constants
 # Sizes
 SIZE_BLOCK = 50
-SIZE_FIELD_IN_BLOCKS = (4, 4)
+SIZE_FIELD_IN_BLOCKS = (2, 2)
 SIZE_SPACE = 10
 SIZE_WINDOW = (
     (SIZE_BLOCK + SIZE_SPACE) * SIZE_FIELD_IN_BLOCKS[0] + SIZE_SPACE,
@@ -27,8 +27,8 @@ COLOR_OVER_TEXT = (255, 116, 0)
 # Other
 W = pygame.display.set_mode((SIZE_WINDOW[0], SIZE_WINDOW[1]))
 C = pygame.time.Clock()
-WIN_TEXT = 'ПОБЕДА!!!'
-OVER_TEXT = {'edge': 'ПОКА :(', 'tail': 'АЙ! НЕВКУСНО!'}
+WIN_TEXT = ('ПОБЕДА!!!', 'УРА!!!')
+OVER_TEXT = {'edge': ('ПОКА :(', 'ТЫДЫЩ!!!'), 'tail': ('АЙ! НЕВКУСНО!', 'АЙ! БОЛЬНО В НОГЕ!')}
 FPS = 60
 TIME_DELAY_MOVE = 300
 FONT_FILE = 'black-pixel.ttf'
@@ -149,10 +149,11 @@ def from_pos_to_num(x, y) -> int:
     y /= SIZE_BLOCK + SIZE_SPACE
     return int(y * SIZE_FIELD_IN_BLOCKS[0] + x)
 def win():
+    text_win = random.choice(WIN_TEXT)
     f = pygame.font.Font(FONT_FILE, 20)
-    test_text = f.render(WIN_TEXT, True, (0, 0, 0))
+    test_text = f.render(text_win, True, (0, 0, 0))
     F = pygame.font.Font(FONT_FILE, int(SIZE_WINDOW[0] * 0.8 / test_text.get_width() * test_text.get_height()))
-    text = F.render(WIN_TEXT, True, COLOR_WIN_TEXT)
+    text = F.render(text_win, True, COLOR_WIN_TEXT)
     del f, test_text
 
     snake.draw()
@@ -160,7 +161,7 @@ def win():
     pygame.display.flip()
     delay_exit()
 def game_over(type_over):
-    text_over = OVER_TEXT[type_over]
+    text_over = random.choice(OVER_TEXT[type_over])
     f = pygame.font.Font(FONT_FILE, 20)
     test_text = f.render(text_over, True, (0, 0, 0))
     F = pygame.font.Font(FONT_FILE, int(SIZE_WINDOW[0] * 0.8 / test_text.get_width() * test_text.get_height()))
@@ -187,7 +188,7 @@ for i in range(SIZE_FIELD_IN_BLOCKS[0] * SIZE_FIELD_IN_BLOCKS[1]):
 snake = Snake(Head(SIZE_SPACE, SIZE_SPACE))
 apple = Apple()
 
-
+win()
 # Game circle
 while True:
     events()
