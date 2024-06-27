@@ -84,23 +84,22 @@ class Button():
             self.now_rect_text = self.text_rect
             self.now_surf_rect = self.surf_rect
             self.now_surf_text = self.surf_text
-        if self.rect.collidepoint(mouse_pos[0], mouse_pos[1]):
+        if pygame.Rect(self.x, self.y, self.rect.width, self.rect.height).collidepoint(mouse_pos[0], mouse_pos[1]):
             if  mouse_pressed[0]:
-                if self.mode != 'pressed':
-                    self.mode = 'pressed'
-                    self.now_color_rect = self.color_rect_pressed
-                    self.now_text = self.text_pressed
-                    self.now_rect_text = self.text_rect_pressed
-                    self.now_surf_rect = self.surf_rect_pressed
-                    self.now_surf_text = self.surf_text_pressed
+                self.mode = 'pressed'
+                self.now_color_rect = self.color_rect_pressed
+                self.now_text = self.text_pressed
+                self.now_rect_text = self.text_rect_pressed
+                self.now_surf_rect = self.surf_rect_pressed
+                self.now_surf_text = self.surf_text_pressed
             else:
                 set_normal(self)
                 self.now_color_rect = self.color_cursor_on_button
                 self.now_surf_rect = self.surf_cursor_on_button
         else:
-            set_normal(self)
             if self.mode != 'normal':
                 self.command()
+            set_normal(self)
     def draw(self, window: pygame.Surface) -> None:
         pygame.draw.rect(self.now_surf_rect, self.now_color_rect, self.rect)
         window.blit(self.now_surf_rect, (self.x, self.y))
