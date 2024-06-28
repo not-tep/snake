@@ -159,7 +159,7 @@ def create_constants(size_field_in_blocks, speed):
     COLOR_BLOCK = (0, 255, 0)
     COLOR_APPLE = (255, 0, 0)
     COLOR_FONT = (0, 182, 63)
-    COLOR_WIN_TEXT = (0, 185, 69)
+    COLOR_WIN_TEXT = (15, 135, 59)
     COLOR_OVER_TEXT = (255, 116, 0)
 
     # Other
@@ -199,9 +199,12 @@ def win() -> None:
     snake.draw()
 
     text_win = random.choice(WIN_TEXT)
-    create_main_text(text_win, COLOR_WIN_TEXT)
+    create_main_text(text_win, COLOR_WIN_TEXT, W)
 
-    W.blit(text, rect_text)
+    size = get_size_not_main_text(2, 'r - перезапустить уровень', 'm - вернуться в меню')
+    create_not_main_text('r - перезапустить уровень', size, COLOR_WIN_TEXT, 0, W)
+    create_not_main_text('m - вернуться в меню', size, COLOR_WIN_TEXT, 1, W)
+
     pygame.display.flip()
     
     return delay_exit((pygame.K_r, pygame.K_n, pygame.K_m))
@@ -211,7 +214,11 @@ def game_over(type_over) -> None:
     apple.draw()
 
     text_over = random.choice(OVER_TEXT[type_over])
-    create_main_text(text_over, COLOR_OVER_TEXT)
+    create_main_text(text_over, COLOR_OVER_TEXT, W)
+
+    size = get_size_not_main_text(2, 'r - перезапустить уровень', 'm - вернуться в меню')
+    create_not_main_text('r - перезапустить уровень', size, COLOR_OVER_TEXT, 0, W)
+    create_not_main_text('m - вернуться в меню', size, COLOR_OVER_TEXT, 1, W)
 
     W.blit(text, rect_text)
     pygame.display.flip()
@@ -226,7 +233,7 @@ def delay_exit(codes):
             if e.type == pygame.KEYDOWN:
                 if e.key in codes:
                     return e.key
-def create_main_text(text_, color):
+def create_main_text(text_, color, window):
     global text, rect_text
     text_str = text_
     size_text = int(min(SIZE_WINDOW[0] / font_ratio / len(text_str) * 0.8, SIZE_WINDOW[1] / 2))
@@ -234,8 +241,18 @@ def create_main_text(text_, color):
     text = F.render(text_, True, color)
     rect_text = text.get_rect()
     rect_text.center = (SIZE_WINDOW[0] // 2, (SIZE_WINDOW[1] - text.get_height()) // 2)
-
-    return text, rect_text
+    window.blit(text, rect_text)
+def create_not_main_text(text_, size, color, number, window):
+    global text, rect_text
+    F = pygame.font.Font(FONT_FILE, int(size))
+    text = F.render(text_, True, color)
+    rect_text = text.get_rect()
+    rect_text.top = SIZE_WINDOW[1] * 0.5 + size + size * number
+    rect_text.centerx = SIZE_WINDOW[0] / 2
+    window.blit(text, rect_text)
+def get_size_not_main_text(total_texts, *texts):
+    longest = max(*texts, key = len)
+    return int(min(SIZE_WINDOW[0] / font_ratio / len(longest) * 0.8, SIZE_WINDOW[1] * 0.5 / (total_texts * 2 - 1)))
 
 
 if __name__ == '__main__':

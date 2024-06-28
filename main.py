@@ -1,5 +1,6 @@
 import pygame
 import snake
+import random
 from Button import *
 
 WINDOW = pygame.display.set_mode((500, 500))
@@ -13,20 +14,31 @@ WINDOW = pygame.display.set_mode((500, 500))
 #     color_cursor_on_button = (),
 #     color_rect_pressed = (88, 224, 0, 50),
 # )
-def hi(): print('hi')
+def hi(width = None, height = None): 
+    if width == None:
+        width = random.randint(5, 5)
+    if height == None:
+        height = random.randint(5, 5)
+    result = snake.Game(size_field_in_blocks = (width, height), speed = 300).start()
+    if result == pygame.K_r:
+        hi(width, height)
+    elif result == pygame.K_m:
+        WINDOW = pygame.display.set_mode((500, 500))
+
+
 b = Button(
     x = 100, 
     y = 100,
     width = 300,
     height = 100,
-    color_rect = (88, 224, 0, 150),
-    color_cursor_on_button = (88, 224, 0, 200),
+    color_rect = (88, 224, 0, 200),
+    color_cursor_on_button = (88, 224, 0, 225),
     color_rect_pressed = (88, 224, 0, 255),
-    text = 'Привет',
-    text_pressed = 'Пока',
-    color_text = (50, 50, 50),
-    color_text_pressed = (0, 0, 0),
-    font = pygame.font.Font('black-pixel.ttf', 30),
+    text = 'Играть',
+    text_pressed = 'Играть',
+    color_text = (125, 125, 125),
+    color_text_pressed = (25, 25, 25),
+    font = pygame.font.Font('black-pixel.ttf', 50),
     command = hi
 )
 
