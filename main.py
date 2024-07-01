@@ -28,7 +28,7 @@ b = Button(
     text = 'Играть',
     text_pressed = 'Играть',
     color_text = (125, 125, 125),
-    color_text_pressed = (25, 25, 25),
+    color_text_pressed = (255, 255, 255),
     font = pygame.font.Font('black-pixel.ttf', 50),
     command = play
 )

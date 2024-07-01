@@ -91,7 +91,7 @@ class Null_cell():
         null_cells.remove(self.coordinates)
 
 
-class Game():    
+class Game():
     def __init__(self, size_field_in_blocks: tuple = (4, 4), speed: int = 300) -> None:
         create_constants(size_field_in_blocks, speed)
 
@@ -228,6 +228,7 @@ def from_pos_to_num(x, y) -> int:
     x /= SIZE_BLOCK + SIZE_SPACE
     y /= SIZE_BLOCK + SIZE_SPACE
     return int(y * SIZE_FIELD_IN_BLOCKS[0] + x)
+
 def win() -> None:
     snake.draw()
 
@@ -240,8 +241,7 @@ def win() -> None:
 
     pygame.display.flip()
     
-    return delay_exit((pygame.K_r, pygame.K_n, pygame.K_m))
-    
+    return delay_exit((pygame.K_r, pygame.K_m))
 def game_over(type_over) -> None:
     snake.draw()
     apple.draw()
