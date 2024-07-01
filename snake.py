@@ -1,7 +1,6 @@
-from typing import Any
 import pygame
 import random
-
+import time
 
 pygame.font.init()
 
@@ -98,19 +97,6 @@ class Game():
 
         global t, snake_vector, temporary_vector, all_cells, null_cells, snake, apple, all_symbols, font_ratio
 
-        # Variables
-        t = pygame.time.get_ticks()
-        snake_vector = (1, 0)
-        temporary_vector = snake_vector
-
-        all_symbols = '.1234567890!?ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЁЯЧСМИТЬБЮйцукенгшщзхъфывапролджэёячсмитьбю'
-        f = pygame.font.Font(FONT_FILE, 20)
-        test_text = f.render(all_symbols, True, (0, 0, 0))
-        font_ratio = test_text.get_width() / test_text.get_height() / len(all_symbols)
-        del f, test_text
-
-        all_cells = []
-        null_cells = []
         for i in range(SIZE_FIELD_IN_BLOCKS[0] * SIZE_FIELD_IN_BLOCKS[1]):
             all_cells.append(Null_cell(i % SIZE_FIELD_IN_BLOCKS[0], i // SIZE_FIELD_IN_BLOCKS[0]))
 
@@ -143,7 +129,7 @@ class Game():
 # Functions
 
 def create_constants(size_field_in_blocks, speed):
-    global SIZE_BLOCK, SIZE_FIELD_IN_BLOCKS, SIZE_SPACE, SIZE_WINDOW, COLOR_BACKGROUND, COLOR_BLOCK, COLOR_APPLE, COLOR_FONT, COLOR_WIN_TEXT, COLOR_OVER_TEXT, W, C, WIN_TEXT, OVER_TEXT, FPS, TIME_DELAY_MOVE, FONT_FILE
+    global SIZE_BLOCK, SIZE_FIELD_IN_BLOCKS, SIZE_SPACE, SIZE_WINDOW, COLOR_BACKGROUND, COLOR_BLOCK, COLOR_APPLE, COLOR_FONT, COLOR_WIN_TEXT, COLOR_OVER_TEXT, W, C, WIN_TEXT, OVER_TEXT, FPS, TIME_DELAY_MOVE, FONT_FILE, t, temporary_vector, font_ratio, all_cells, null_cells, snake_vector
     # Constants
     # Sizes
     SIZE_BLOCK = 50
@@ -171,12 +157,32 @@ def create_constants(size_field_in_blocks, speed):
     TIME_DELAY_MOVE = speed
     FONT_FILE = 'black-pixel.ttf'
 
+    # Variables
+    t = pygame.time.get_ticks()
+    snake_vector = (1, 0)
+    temporary_vector = snake_vector
+
+    all_symbols = '.1234567890!?ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЁЯЧСМИТЬБЮйцукенгшщзхъфывапролджэёячсмитьбю'
+    f = pygame.font.Font(FONT_FILE, 20)
+    test_text = f.render(all_symbols, True, (0, 0, 0))
+    font_ratio = test_text.get_width() / test_text.get_height() / len(all_symbols)
+    del f, test_text
+
+    all_cells = []
+    null_cells = []
+
 def events() -> None:
     global temporary_vector
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             exit()
         if e.type == pygame.KEYDOWN:
+            if e.key == pygame.K_p:
+                pause(
+                    pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] / font_ratio / len('ПАУЗА') * 0.8, SIZE_WINDOW[1] * 0.5))),
+                    pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] * 0.5, SIZE_WINDOW[1] * 0.5))), 
+                    (127, 127, 127)
+                )
             if e.key == pygame.K_UP:
                 if snake_vector != (0, 1):
                     temporary_vector = (0, -1)
@@ -189,6 +195,33 @@ def events() -> None:
             if e.key == pygame.K_LEFT:
                 if snake_vector != (1, 0):
                     temporary_vector = (-1, 0)
+def pause(font1: pygame.font.Font, font2: pygame.font.Font, color: tuple[int, int, int]):
+    global t
+    def draw(text, font):
+        W.fill(COLOR_BACKGROUND)
+        
+        text: pygame.Surface = font.render(text, True, color)
+        rect_text = text.get_rect()
+        rect_text.center = (SIZE_WINDOW[0] / 2, SIZE_WINDOW[1] / 2)
+        snake.draw()
+        apple.draw()
+        
+        W.blit(text, rect_text)
+        pygame.display.flip()
+
+    draw('Пауза', font1)
+
+    while True:
+        for e in pygame.event.get():
+            if e.type == pygame.QUIT:
+                exit()
+            if e.type == pygame.KEYDOWN and e.key == pygame.K_p:
+                for i in range(3):
+                    draw(str(3 - i), font2)
+                    time.sleep(1)
+                t = pygame.time.get_ticks()
+                return
+
 def from_pos_to_num(x, y) -> int:
     x -= SIZE_SPACE
     y -= SIZE_SPACE
