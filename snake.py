@@ -150,6 +150,7 @@ def create_constants(size_field_in_blocks, speed):
 
     # Other
     W = pygame.display.set_mode((SIZE_WINDOW[0], SIZE_WINDOW[1]))
+    pygame.display.set_caption('Змейка')
     C = pygame.time.Clock()
     WIN_TEXT = ('ПОБЕДА!!!', 'УРА!!!')
     OVER_TEXT = {'edge': ('ПОКА :(', 'ТЫДЫЩ!!!'), 'tail': ('АЙ! НЕВКУСНО!', 'АЙ! БОЛЬНО В НОГЕ!')}

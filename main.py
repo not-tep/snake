@@ -4,6 +4,7 @@ import random
 from Button import *
 
 WINDOW = pygame.display.set_mode((500, 300))
+pygame.display.set_caption('Главное меню')
 
 def play(width = None, height = None): 
     if width == None:
