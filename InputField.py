@@ -16,6 +16,8 @@ class InputField():
         width: int, 
         height: int,
         color_rect: tuple[int, int, int],
+        width_border: int = 0,
+        color_border: tuple[int, int, int] = (0, 0, 0),
 
         max_len_text: int|None = None,
         default_text: str = '',
@@ -35,6 +37,8 @@ class InputField():
         self.rect = pygame.Rect(self.x, self.y, width, height)
         self.draw_rect = pygame.rect.Rect(0, 0, width, height)
         self.color_rect = color_rect
+        self.width_border = width_border
+        self.color_border = color_border
         self.surf = pygame.Surface((width, height))
 
         self.max_len_text = max_len_text
@@ -56,7 +60,6 @@ class InputField():
         self.x_text = self.pad_x_text
         self.y_text = (self.rect.height - self.text.get_height()) / 2
         self.len_text = [0]
-
     def check_mouse(self, mouse_click, mouse_pos):
         if mouse_click[0]:
             if self.rect.collidepoint(mouse_pos):
@@ -65,7 +68,6 @@ class InputField():
                     self.timer = pygame.time.get_ticks()
             else:
                 self.mode = 'normal'
-
     def update(self, event):
         if self.mode == 'active':
             if event.key == pygame.K_RETURN:
@@ -118,9 +120,14 @@ class InputField():
                             self.len_text[i] += now_symbol.get_width()
             except ValueError:
                 pass
-
     def draw(self, window):
-        pygame.draw.rect(self.surf, self.color_rect, self.draw_rect)
+        pygame.draw.rect(self.surf, self.color_border, self.draw_rect, self.width_border)
+        pygame.draw.rect(self.surf, self.color_rect, (
+            self.width_border, 
+            self.width_border, 
+            self.rect.width - self.width_border * 2,
+            self.rect.height - self.width_border * 2
+        ))
         if self.text_str != '':
             self.surf.blit(self.text, (self.x_text, self.y_text))
         else:
@@ -129,6 +136,11 @@ class InputField():
             self.surf.blit(self.cursor, (self.x_text + self.len_text[self.cursor_index] - self.cursor.get_width() / 2, self.y_text))
         window.blit(self.surf, (self.x, self.y))
 
+    def get_input(self):
+        return self.text_str
+    def set_text(self, text):
+        self.text_str = text
+        self.text = self.font.render(self.text_str, True, self.color_text)
 
 if __name__ == '__main__':
     window = pygame.display.set_mode((550, 80))
