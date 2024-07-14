@@ -92,6 +92,16 @@ class InputField():
                         self.len_text[i] -= deleting_symbol.get_width()
                 return
             
+            if event.key == pygame.K_DELETE:
+                if self.cursor_index < len(self.text_str):
+                    deleting_symbol = self.font.render(str(self.text_str[self.cursor_index]), True, (0, 0, 0))
+                    self.text_str = self.text_str[:self.cursor_index] + self.text_str[self.cursor_index + 1:len(self.text_str)]
+                    self.text = self.font.render(self.text_str, True, self.color_text)
+                    self.len_text.pop(self.cursor_index)
+                    for i in range(self.cursor_index, len(self.len_text)):
+                        self.len_text[i] -= deleting_symbol.get_width()
+                return
+
             if event.key == pygame.K_LEFT:
                 if self.cursor_index > 0:
                     self.cursor_index -= 1
@@ -143,22 +153,24 @@ class InputField():
         self.text = self.font.render(self.text_str, True, self.color_text)
 
 if __name__ == '__main__':
-    window = pygame.display.set_mode((550, 80))
+    window = pygame.display.set_mode((720, 95))
     font = pygame.font.Font('black-pixel.ttf', 40)
     def good(): print('good!')
     if1 = InputField(
-        x = 5,
-        y = 5,
-        pad_x_text = 5,
-        width = 500,
-        height = 50,
+        x = 10,
+        y = 10,
+        pad_x_text = 10,
+        width = 700,
+        height = 75,
         color_rect = (255, 255, 255),
-        max_len_text = 2,
-        default_text = 'Введи что-нибудь',
-        color_default_text = (127, 127, 127),
-        font = font,
+        width_border = 5,
+        color_border = (88, 224, 0),
+        max_len_text = None,
+        default_text = 'Введите что-нибудь',
+        color_default_text = (125, 125, 125),
+        font = pygame.font.Font('black-pixel.ttf', 50),
         color_text = (0, 0, 0),
-        react_enter = False,
+        active_buttons = None,
         command_enter = good
     )
     while True:
@@ -170,6 +182,6 @@ if __name__ == '__main__':
                 if1.update(e)
 
         
-        window.fill((200, 255, 200))
+        window.fill((255, 255, 255))
         if1.draw(window)
         pygame.display.flip()
