@@ -117,8 +117,7 @@ class InputField():
                 return
             
             try:
-                chr(event.key)
-                if not self.active_buttons or chr(event.key) in self.active_buttons:
+                if event.unicode != '' and (not self.active_buttons or event.unicode in self.active_buttons):
                     if not self.max_len_text or len(self.text_str) < self.max_len_text:
                         pressed_symdol = event.unicode
                         self.text_str = self.text_str[:self.cursor_index] + pressed_symdol + self.text_str[self.cursor_index:len(self.text_str)]
@@ -170,7 +169,7 @@ if __name__ == '__main__':
         color_default_text = (125, 125, 125),
         font = pygame.font.Font('black-pixel.ttf', 50),
         color_text = (0, 0, 0),
-        active_buttons = None,
+        active_buttons = '0123456789',
         command_enter = good
     )
     while True:
