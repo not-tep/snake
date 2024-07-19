@@ -9,6 +9,7 @@ WINDOW = pygame.display.set_mode((650, 600))
 pygame.display.set_caption('Главное меню')
 
 mode = 'main menu'
+list_modes = ['main menu', 'second menu', 'input size']
 
 
 def set_mode_main_menu():
@@ -47,10 +48,14 @@ def start_second_menu():
 
     mouse_event = pygame.mouse.get_pressed()
     mouse_pos = pygame.mouse.get_pos()
+
     button_play_random.update(mouse_event, mouse_pos)
-    button_play_random.draw(WINDOW)
     button_input_size.update(mouse_event, mouse_pos)
+    exit_button.update(mouse_event, mouse_pos)
+    
+    button_play_random.draw(WINDOW)
     button_input_size.draw(WINDOW)
+    exit_button.draw(WINDOW)
 
     pygame.display.flip()
 def start_input_size():
@@ -60,8 +65,7 @@ def start_input_size():
     mouse_pos = pygame.mouse.get_pos()
     input_field_width.check_mouse(mouse_event, mouse_pos)
     input_field_height.check_mouse(mouse_event, mouse_pos)
-    enter_size_button.update(mouse_event, mouse_pos)
-
+    
     for e in pygame.event.get():
         if e.type == pygame.QUIT:
             exit()
@@ -69,18 +73,25 @@ def start_input_size():
             input_field_width.update(e)
             input_field_height.update(e)
 
+    enter_size_button.update(mouse_event, mouse_pos)
+    exit_button.update(mouse_event, mouse_pos)
+
     input_field_width.draw(WINDOW)
     input_field_height.draw(WINDOW)
     enter_size_button.draw(WINDOW)
+    exit_button.draw(WINDOW)
 
     pygame.display.flip()
-    
+def back():
+    global mode
+    mode = list_modes[list_modes.index(mode) - 1]
+
 def play(width = None, height = None): 
     if width == None:
         width = random.randint(4, 15)
     if height == None:
         height = random.randint(4, 15)
-    result = snake.Game(size_field_in_blocks = (width, height), speed = 500).start()
+    result = snake.Game(size_field_in_blocks = (width, height), speed = 300).start()
     if result == pygame.K_r:
         play(width, height)
     elif result == pygame.K_m:
@@ -191,6 +202,22 @@ enter_size_button = Button(
     font = pygame.font.Font('black-pixel.ttf', 50),
     command = analize_input_size
 )
+exit_button = Button(
+    x = 25, 
+    y = 25,
+    width = 50,
+    height = 50,
+    color_rect = (88, 224, 0, 200),
+    color_cursor_on_button = (88, 224, 0, 225),
+    color_rect_pressed = (88, 224, 0, 255),
+    text = '<—',
+    text_pressed = '<—',
+    color_text = (125, 125, 125),
+    color_text_pressed = (255, 255, 255),
+    font = pygame.font.Font('black-pixel.ttf', 35),
+    command = back
+)
+# ×
 
 while True:
     if mode == 'main menu':
