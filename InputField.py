@@ -53,7 +53,6 @@ class InputField():
         self.react_enter = react_enter
         self.command_enter = command_enter
         self.mode = 'normal'
-        self.timer = 0
         self.cursor = self.font.render('|', True, (127, 127, 127))
         self.cursor_index = 0
 
@@ -64,8 +63,6 @@ class InputField():
         if mouse_click[0]:
             if self.rect.collidepoint(mouse_pos):
                 self.mode = 'active'
-                if self.mode != 'active':
-                    self.timer = pygame.time.get_ticks()
             else:
                 self.mode = 'normal'
     def update(self, event):
@@ -80,7 +77,6 @@ class InputField():
                     self.len_text = [0]
                     return text_str
                 return
-            
             if event.key == pygame.K_BACKSPACE:
                 if self.cursor_index > 0:
                     deleting_symbol = self.font.render(str(self.text_str[self.cursor_index - 1]), True, (0, 0, 0))
@@ -91,7 +87,6 @@ class InputField():
                     for i in range(self.cursor_index, len(self.len_text)):
                         self.len_text[i] -= deleting_symbol.get_width()
                 return
-            
             if event.key == pygame.K_DELETE:
                 if self.cursor_index < len(self.text_str):
                     deleting_symbol = self.font.render(str(self.text_str[self.cursor_index]), True, (0, 0, 0))
@@ -101,17 +96,14 @@ class InputField():
                     for i in range(self.cursor_index, len(self.len_text)):
                         self.len_text[i] -= deleting_symbol.get_width()
                 return
-
             if event.key == pygame.K_LEFT:
                 if self.cursor_index > 0:
                     self.cursor_index -= 1
                 return
-            
             if event.key == pygame.K_RIGHT:
                 if self.cursor_index < len(self.text_str):
                     self.cursor_index += 1
                 return
-            
             if event.key == pygame.K_ESCAPE:
                 self.mode = 'normal'
                 return
@@ -148,8 +140,17 @@ class InputField():
     def get_input(self):
         return self.text_str
     def set_text(self, text):
-        self.text_str = text
-        self.text = self.font.render(self.text_str, True, self.color_text)
+        self.text_str = ''
+        self.len_text = [0]
+        self.cursor_index = 0
+        for i in text:
+            pressed_symdol = i
+            self.text_str = self.text_str + pressed_symdol
+            self.cursor_index += 1
+            self.text = self.font.render(self.text_str, True, self.color_text)
+            now_symbol = self.font.render(pressed_symdol, True, (0, 0, 0))
+            self.len_text.append(self.len_text[-1] + now_symbol.get_width())
+
 
 if __name__ == '__main__':
     window = pygame.display.set_mode((720, 95))

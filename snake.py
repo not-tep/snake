@@ -174,8 +174,8 @@ def create_constants(size_field_in_blocks, speed):
     font_ratio = test_text.get_width() / test_text.get_height() / len(all_symbols)
     del f, test_text
     
-    FONT_PAUSE_NUMBER = pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] / font_ratio / len('ПАУЗА') * 0.8, SIZE_WINDOW[1] * 0.5)))
-    FONT_PAUSE_TEXT = pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] * 0.5, SIZE_WINDOW[1] * 0.5)))
+    FONT_PAUSE_TEXT = pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] / font_ratio / len('ПАУЗА') * 0.8, SIZE_WINDOW[1] * 0.5)))
+    FONT_PAUSE_NUMBER = pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] * 0.5, SIZE_WINDOW[1] * 0.5)))
     COLOR_PAUSE_TEXT = (127, 127, 127)
 
     all_cells = []

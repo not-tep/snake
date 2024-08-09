@@ -88,25 +88,31 @@ def back():
 
 def play(width = None, height = None): 
     if width == None:
-        width = random.randint(4, 15)
+        width = random.randint(4, 10)
     if height == None:
-        height = random.randint(4, 15)
+        height = random.randint(4, 10)
     result = snake.Game(size_field_in_blocks = (width, height), speed = 300).start()
     if result == pygame.K_r:
         play(width, height)
     elif result == pygame.K_m:
         set_mode_main_menu()
 def analize_input_size():
-    try:
-        if 2 <= int(input_field_width.get_input()) <= 15 and\
-        2 <= int(input_field_height.get_input()) <= 15:
-            play(
-                int(input_field_width.get_input()), 
-                int(input_field_height.get_input())
-            )
-    except ValueError:
-        pass
+    g = 0
+    def check_input_field(input_field):
+        nonlocal g
+        if input_field.get_input() != '' and \
+           2 <= int(input_field.get_input()) <= 30:
+            g += 1
+        else:
+            input_field.set_text('')
 
+    check_input_field(input_field_width)
+    check_input_field(input_field_height)
+    if g == 2:
+        play(
+            int(input_field_width.get_input()),
+            int(input_field_height.get_input())
+        )    
 
 button_play = Button(
     x = 100, 
@@ -163,7 +169,7 @@ input_field_width = InputField(
     width_border = 5,
     color_border = (88, 224, 0),
     max_len_text = 2,
-    default_text = 'Ширана (2 - 15)',
+    default_text = 'Ширина (2 - 30)',
     color_default_text = (125, 125, 125),
     font = pygame.font.Font('black-pixel.ttf', 50),
     color_text = (0, 0, 0),
@@ -180,7 +186,7 @@ input_field_height = InputField(
     width_border = 5,
     color_border = (88, 224, 0),
     max_len_text = 2,
-    default_text = 'Высота (2 - 15)',
+    default_text = 'Высота (2 - 30)',
     color_default_text = (125, 125, 125),
     font = pygame.font.Font('black-pixel.ttf', 50),
     color_text = (0, 0, 0),
