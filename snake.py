@@ -102,6 +102,10 @@ class Game():
 
         snake = Snake(Head(SIZE_SPACE, SIZE_SPACE))
         apple = Apple()
+        for i in range(3):
+            draw_pause(str(3 - i), FONT_PAUSE_NUMBER, COLOR_PAUSE_TEXT)
+            time.sleep(1)
+
     def start(self):
         return Game.run()
     def run():
@@ -129,7 +133,7 @@ class Game():
 # Functions
 
 def create_constants(size_field_in_blocks, speed):
-    global SIZE_BLOCK, SIZE_FIELD_IN_BLOCKS, SIZE_SPACE, SIZE_WINDOW, COLOR_BACKGROUND, COLOR_BLOCK, COLOR_APPLE, COLOR_FONT, COLOR_WIN_TEXT, COLOR_OVER_TEXT, W, C, WIN_TEXT, OVER_TEXT, FPS, TIME_DELAY_MOVE, FONT_FILE, t, temporary_vector, font_ratio, all_cells, null_cells, snake_vector
+    global SIZE_BLOCK, SIZE_FIELD_IN_BLOCKS, SIZE_SPACE, SIZE_WINDOW, COLOR_BACKGROUND, COLOR_BLOCK, COLOR_APPLE, COLOR_FONT, COLOR_WIN_TEXT, COLOR_OVER_TEXT, W, C, WIN_TEXT, OVER_TEXT, FPS, TIME_DELAY_MOVE, FONT_FILE, FONT_PAUSE_NUMBER, FONT_PAUSE_TEXT, COLOR_PAUSE_TEXT, t, temporary_vector, font_ratio, all_cells, null_cells, snake_vector
     # Constants
     # Sizes
     SIZE_BLOCK = 50
@@ -156,6 +160,7 @@ def create_constants(size_field_in_blocks, speed):
     OVER_TEXT = {'edge': ('ПОКА :(', 'ТЫДЫЩ!!!'), 'tail': ('АЙ! НЕВКУСНО!', 'АЙ! БОЛЬНО В НОГЕ!')}
     FPS = 60
     TIME_DELAY_MOVE = speed
+
     FONT_FILE = 'black-pixel.ttf'
 
     # Variables
@@ -168,6 +173,10 @@ def create_constants(size_field_in_blocks, speed):
     test_text = f.render(all_symbols, True, (0, 0, 0))
     font_ratio = test_text.get_width() / test_text.get_height() / len(all_symbols)
     del f, test_text
+    
+    FONT_PAUSE_NUMBER = pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] / font_ratio / len('ПАУЗА') * 0.8, SIZE_WINDOW[1] * 0.5)))
+    FONT_PAUSE_TEXT = pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] * 0.5, SIZE_WINDOW[1] * 0.5)))
+    COLOR_PAUSE_TEXT = (127, 127, 127)
 
     all_cells = []
     null_cells = []
@@ -179,11 +188,7 @@ def events() -> None:
             exit()
         if e.type == pygame.KEYDOWN:
             if e.key == pygame.K_p:
-                pause(
-                    pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] / font_ratio / len('ПАУЗА') * 0.8, SIZE_WINDOW[1] * 0.5))),
-                    pygame.font.Font(FONT_FILE, int(min(SIZE_WINDOW[0] * 0.5, SIZE_WINDOW[1] * 0.5))), 
-                    (127, 127, 127)
-                )
+                pause()
             if e.key == pygame.K_UP:
                 if snake_vector != (0, 1):
                     temporary_vector = (0, -1)
@@ -196,21 +201,22 @@ def events() -> None:
             if e.key == pygame.K_LEFT:
                 if snake_vector != (1, 0):
                     temporary_vector = (-1, 0)
-def pause(font1: pygame.font.Font, font2: pygame.font.Font, color: tuple[int, int, int]):
-    global t
-    def draw(text, font):
-        W.fill(COLOR_BACKGROUND)
-        
-        text: pygame.Surface = font.render(text, True, color)
-        rect_text = text.get_rect()
-        rect_text.center = (SIZE_WINDOW[0] / 2, SIZE_WINDOW[1] / 2)
-        snake.draw()
-        apple.draw()
-        
-        W.blit(text, rect_text)
-        pygame.display.flip()
 
-    draw('Пауза', font1)
+def draw_pause(text, font, color):
+    W.fill(COLOR_BACKGROUND)
+    
+    text: pygame.Surface = font.render(text, True, color)
+    rect_text = text.get_rect()
+    rect_text.center = (SIZE_WINDOW[0] / 2, SIZE_WINDOW[1] / 2)
+    snake.draw()
+    apple.draw()
+    
+    W.blit(text, rect_text)
+    pygame.display.flip()
+def pause():
+    global t
+
+    draw_pause('Пауза', FONT_PAUSE_TEXT, COLOR_PAUSE_TEXT)
 
     while True:
         for e in pygame.event.get():
@@ -218,7 +224,7 @@ def pause(font1: pygame.font.Font, font2: pygame.font.Font, color: tuple[int, in
                 exit()
             if e.type == pygame.KEYDOWN and e.key == pygame.K_p:
                 for i in range(3):
-                    draw(str(3 - i), font2)
+                    draw_pause(str(3 - i), FONT_PAUSE_NUMBER, COLOR_PAUSE_TEXT)
                     time.sleep(1)
                 t = pygame.time.get_ticks()
                 return
